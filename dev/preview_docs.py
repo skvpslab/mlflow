@@ -104,7 +104,7 @@ Failed to find a documentation preview for {args.commit_sha}.
     comment_body = f"""
 Documentation preview for {args.commit_sha} will be available when [this CircleCI job]({job_url}) completes successfully.
 
-- [Top page]({top_pge})
+- [Top page]({top_page})
 - [Changed pages]({changed_pages})
 
 <details>
