@@ -7,8 +7,8 @@ import re
 import requests
 
 
-def fetch_changed_files(pr_num: str) -> list[str]:
-    url = f"https://api.github.com/repos/mlflow/mlflow/pulls/{pr_num}/files"
+def fetch_changed_files(pr: str) -> list[str]:
+    url = pr.replace("github.com", "api.github.com/repos") + "/files"
     per_page = 100
     changed_files = []
     for page in range(1, 100):
@@ -21,13 +21,13 @@ def fetch_changed_files(pr_num: str) -> list[str]:
 
 
 def main() -> None:
-    pr_num = os.environ.get("CIRCLE_PR_NUMBER")
-    if pr_num is None:
+    pr = os.environ.get("CIRCLE_PULL_REQUEST")
+    if pr is None:
         return
 
     SOURCE_REGEX = re.compile(r"<!-- source: (.+) -->")
     BUILD_DIR = pathlib.Path("build/html")
-    changed_files = fetch_changed_files(pr_num)
+    changed_files = fetch_changed_files(pr)
     changed_pages: list[str] = []
     for p in BUILD_DIR.rglob("**/*.html"):
         if m := SOURCE_REGEX.search(p.read_text()):
