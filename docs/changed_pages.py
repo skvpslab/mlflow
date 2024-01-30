@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 import pathlib
 import re
@@ -5,8 +7,7 @@ import re
 import requests
 
 
-def fetch_changed_files():
-    pr_num = os.environ["CIRCLE_PR_NUMBER"]
+def fetch_changed_files(pr_num: str) -> list[str]:
     url = f"https://api.github.com/repos/mlflow/mlflow/pulls/{pr_num}/files"
     per_page = 100
     changed_files = []
@@ -19,11 +20,15 @@ def fetch_changed_files():
             return changed_files
 
 
-def main():
+def main() -> None:
+    pr_num = os.environ.get("CIRCLE_PR_NUMBER")
+    if pr_num is None:
+        return
+
     SOURCE_REGEX = re.compile(r"<!-- source: (.+) -->")
     BUILD_DIR = pathlib.Path("build/html")
-    changed_files = fetch_changed_files()
-    changed_pages = set()
+    changed_files = fetch_changed_files(pr_num)
+    changed_pages: set[str] = set()
     for p in BUILD_DIR.rglob("**/*.html"):
         if m := SOURCE_REGEX.search(p.read_text()):
             source = m.group(1)
