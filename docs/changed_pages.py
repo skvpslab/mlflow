@@ -36,7 +36,7 @@ def main() -> None:
             if source in changed_files:
                 changed_pages.append(p.relative_to(BUILD_DIR))
 
-    links = "".join(f'<li><a href="{p}">{p}</a></li>' for p in changed_pages)
+    links = "".join(f'<li><a href="{p}"><h2>{p}</h2></a></li>' for p in changed_pages)
     diff_html = f"""
 <h1>Changed Pages</h1>
 <ul>{links}</ul>
