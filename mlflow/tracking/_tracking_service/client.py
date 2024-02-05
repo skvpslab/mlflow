@@ -32,6 +32,11 @@ from mlflow.utils.validation import (
     _validate_run_id,
 )
 
+import logging
+
+
+
+
 
 class TrackingServiceClient:
     """
@@ -39,7 +44,8 @@ class TrackingServiceClient:
     """
 
     _artifact_repos_cache = OrderedDict()
-
+    _logger = logging.getLogger(__name__)
+    
     def __init__(self, tracking_uri):
         """
         Args:
@@ -557,16 +563,17 @@ class TrackingServiceClient:
             )
             artifact_repo.log_artifacts(local_path, path_name)
         else:
-            print("@@@@@@@@@@@@@@@@@")
-            print("@@@@@@@@@@@@@@@@@")
-            print("@@@@@@@@@@@@@@@@@")
-            print("@@@@@@@@@@@@@@@@@\n")
+            
+            _logger.debug(("@@@@@@@@@@@@@@@@@")
+            _logger.debug(("@@@@@@@@@@@@@@@@@")
+            _logger.debug(("@@@@@@@@@@@@@@@@@")
+            _logger.debug(("@@@@@@@@@@@@@@@@@\n")
             artifact_repo.log_artifact(local_path, artifact_path)
             
-            print("@@@@@@@@@@@@@@@@@")
-            print("@@@@@@@@@@@@@@@@@")
-            print("@@@@@@@@@@@@@@@@@")
-            print("@@@@@@@@@@@@@@@@@\n")
+            _logger.debug(("@@@@@@@@@@@@@@@@@")
+            _logger.debug(("@@@@@@@@@@@@@@@@@")
+            _logger.debug(("@@@@@@@@@@@@@@@@@")
+            _logger.debug(("@@@@@@@@@@@@@@@@@\n")
 
     def log_artifacts(self, run_id, local_dir, artifact_path=None):
         """Write a directory of files to the remote ``artifact_uri``.
