@@ -130,12 +130,7 @@ class AzureBlobArtifactRepository(ArtifactRepository, MultipartUploadMixin):
             container_client.upload_blob(
                 dest_path, file, overwrite=True, timeout=self.write_timeout
             )
-            webhook_url = SLACK_WEBHOOK_URL
-
-            print("############################## 123123")
-            print(webhook_url)
-            send_slack_notification(webhook_url, "log_artifact")
-            print("############################## 424234")
+            
 
     def log_artifacts(self, local_dir, artifact_path=None):
         (container, _, dest_path, _) = self.parse_wasbs_uri(self.artifact_uri)
@@ -155,6 +150,16 @@ class AzureBlobArtifactRepository(ArtifactRepository, MultipartUploadMixin):
                     container_client.upload_blob(
                         remote_file_path, file, overwrite=True, timeout=self.write_timeout
                     )
+                    webhook_url = SLACK_WEBHOOK_URL
+                    message = "log_artifact" + filenames
+                    send_slack_notification(webhook_url,message )
+            
+        
+
+        print("############################## 123123")
+        print(webhook_url)
+        send_slack_notification(webhook_url, "log_artifact upload donew")
+        print("############################## 424234")
 
     def list_artifacts(self, path=None):
         # Newer versions of `azure-storage-blob` (>= 12.4.0) provide a public
