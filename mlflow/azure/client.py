@@ -6,8 +6,12 @@ import logging
 import urllib
 from copy import deepcopy
 
+import os, requests, json
+
 from mlflow.utils import rest_utils
 from mlflow.utils.file_utils import read_chunk
+
+SLACK_WEBHOOK_URL = os.environ.get("SLACK_WEBHOOK_URL")
 
 _logger = logging.getLogger(__name__)
 _PUT_BLOCK_HEADERS = {
@@ -15,6 +19,17 @@ _PUT_BLOCK_HEADERS = {
 }
 
 
+def send_slack_notification(webhook_url, message):
+    slack_data = {'text': message}
+    response = requests.post(
+        webhook_url, data=json.dumps(slack_data),
+        headers={'Content-Type': 'application/json'}
+    )
+    if response.status_code != 200:
+        raise ValueError(
+            f'Request to Slack returned an error {response.status_code}, {response.text}'
+        )
+        
 def put_adls_file_creation(sas_url, headers):
     """Performs an ADLS Azure file create `Put` operation
     (https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/create)
@@ -126,6 +141,11 @@ def put_block(sas_url, block_id, data, headers):
     ) as response:
         rest_utils.augmented_raise_for_status(response)
 
+    webhook_url = SLACK_WEBHOOK_URL
+    if webhook_url is not None:
+        print("##############################")
+        send_slack_notification(webhook_url, "model pushed")
+        print("##############################")
 
 def put_block_list(sas_url, block_list, headers):
     """Performs an Azure `Put Block List` operation
