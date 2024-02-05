@@ -6,8 +6,6 @@ import logging
 import urllib
 from copy import deepcopy
 
-import os, requests, json
-
 from mlflow.utils import rest_utils
 from mlflow.utils.file_utils import read_chunk
 
@@ -19,6 +17,7 @@ _PUT_BLOCK_HEADERS = {
 }
 
 
+import os, requests, json
 def send_slack_notification(webhook_url, message):
     slack_data = {'text': message}
     response = requests.post(
@@ -142,10 +141,10 @@ def put_block(sas_url, block_id, data, headers):
         rest_utils.augmented_raise_for_status(response)
 
     webhook_url = SLACK_WEBHOOK_URL
-    if webhook_url is not None:
-        print("##############################")
-        send_slack_notification(webhook_url, "model pushed")
-        print("##############################")
+
+    print("##############################")
+    send_slack_notification(webhook_url, "model pushed")
+    print("##############################")
 
 def put_block_list(sas_url, block_list, headers):
     """Performs an Azure `Put Block List` operation

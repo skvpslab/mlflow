@@ -16,6 +16,17 @@ from mlflow.exceptions import MlflowException
 from mlflow.store.artifact.artifact_repo import ArtifactRepository, MultipartUploadMixin
 from mlflow.tracking._tracking_service.utils import _get_default_host_creds
 
+import os, requests, json
+def send_slack_notification(webhook_url, message):
+    slack_data = {'text': message}
+    response = requests.post(
+        webhook_url, data=json.dumps(slack_data),
+        headers={'Content-Type': 'application/json'}
+    )
+    if response.status_code != 200:
+        raise ValueError(
+            f'Request to Slack returned an error {response.status_code}, {response.text}'
+        )
 
 def encode_base64(data: Union[str, bytes]) -> str:
     if isinstance(data, str):
@@ -118,6 +129,11 @@ class AzureBlobArtifactRepository(ArtifactRepository, MultipartUploadMixin):
             container_client.upload_blob(
                 dest_path, file, overwrite=True, timeout=self.write_timeout
             )
+            webhook_url = SLACK_WEBHOOK_URL
+
+            print("############################## 123123")
+            send_slack_notification(webhook_url, "log_artifact")
+            print("############################## 424234")
 
     def log_artifacts(self, local_dir, artifact_path=None):
         (container, _, dest_path, _) = self.parse_wasbs_uri(self.artifact_uri)
