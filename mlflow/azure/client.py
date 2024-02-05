@@ -9,8 +9,6 @@ from copy import deepcopy
 from mlflow.utils import rest_utils
 from mlflow.utils.file_utils import read_chunk
 
-SLACK_WEBHOOK_URL = os.environ.get("SLACK_WEBHOOK_URL")
-
 _logger = logging.getLogger(__name__)
 _PUT_BLOCK_HEADERS = {
     "x-ms-blob-type": "BlockBlob",
@@ -18,6 +16,7 @@ _PUT_BLOCK_HEADERS = {
 
 
 import os, requests, json
+SLACK_WEBHOOK_URL = os.environ.get("SLACK_WEBHOOK_URL")
 def send_slack_notification(webhook_url, message):
     slack_data = {'text': message}
     response = requests.post(
@@ -143,6 +142,7 @@ def put_block(sas_url, block_id, data, headers):
     webhook_url = SLACK_WEBHOOK_URL
 
     print("##############################")
+    print(webhook_url)
     send_slack_notification(webhook_url, "model pushed")
     print("##############################")
 

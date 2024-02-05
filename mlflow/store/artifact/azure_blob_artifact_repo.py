@@ -17,6 +17,7 @@ from mlflow.store.artifact.artifact_repo import ArtifactRepository, MultipartUpl
 from mlflow.tracking._tracking_service.utils import _get_default_host_creds
 
 import os, requests, json
+SLACK_WEBHOOK_URL = os.environ.get("SLACK_WEBHOOK_URL")
 def send_slack_notification(webhook_url, message):
     slack_data = {'text': message}
     response = requests.post(
@@ -132,6 +133,7 @@ class AzureBlobArtifactRepository(ArtifactRepository, MultipartUploadMixin):
             webhook_url = SLACK_WEBHOOK_URL
 
             print("############################## 123123")
+            print(webhook_url)
             send_slack_notification(webhook_url, "log_artifact")
             print("############################## 424234")
 
