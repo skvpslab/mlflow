@@ -564,16 +564,24 @@ class TrackingServiceClient:
             artifact_repo.log_artifacts(local_path, path_name)
         else:
             
-            _logger.debug("@@@@@@@@@@@@@@@@@")
-            _logger.debug("@@@@@@@@@@@@@@@@@")
-            _logger.debug("@@@@@@@@@@@@@@@@@")
-            _logger.debug("@@@@@@@@@@@@@@@@@\n")
+            import os
+            SLACK_WEBHOOK_URL = os.environ.get("SLACK_WEBHOOK_URL")
+            webhook_url = SLACK_WEBHOOK_URL
+            def send_slack_notification(webhook_url, message):
+                slack_data = {'text': message}
+                response = requests.post(
+                    webhook_url, data=json.dumps(slack_data),
+                    headers={'Content-Type': 'application/json'}
+                )
+                if response.status_code != 200:
+                    raise ValueError(
+                        f'Request to Slack returned an error {response.status_code}, {response.text}'
+                    )
+            send_slack_notification(webhook_url, "bf log_artifact")
+            
             artifact_repo.log_artifact(local_path, artifact_path)
             
-            _logger.debug("@@@@@@@@@@@@@@@@@")
-            _logger.debug("@@@@@@@@@@@@@@@@@")
-            _logger.debug("@@@@@@@@@@@@@@@@@")
-            _logger.debug("@@@@@@@@@@@@@@@@@\n")
+            send_slack_notification(webhook_url, "af log_artifact")
 
     def log_artifacts(self, run_id, local_dir, artifact_path=None):
         """Write a directory of files to the remote ``artifact_uri``.
