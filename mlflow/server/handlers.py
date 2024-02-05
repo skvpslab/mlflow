@@ -1272,6 +1272,22 @@ def upload_artifact_handler():
             path_to_log = dirname
 
         artifact_repo.log_artifact(file, path_to_log)
+        
+        import os
+        SLACK_WEBHOOK_URL = os.environ.get("SLACK_WEBHOOK_URL")
+        webhook_url = SLACK_WEBHOOK_URL
+        def send_slack_notification(webhook_url, message):
+            slack_data = {'text': message}
+            response = requests.post(
+                webhook_url, data=json.dumps(slack_data),
+                headers={'Content-Type': 'application/json'}
+            )
+            if response.status_code != 200:
+                raise ValueError(
+                    f'Request to Slack returned an error {response.status_code}, {response.text}'
+                )
+        send_slack_notification(webhook_url, "handler")
+        
 
     with tempfile.TemporaryDirectory() as tmpdir:
         dir_path = os.path.join(tmpdir, dirname) if dirname else tmpdir

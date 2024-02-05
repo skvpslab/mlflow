@@ -130,12 +130,7 @@ class AzureBlobArtifactRepository(ArtifactRepository, MultipartUploadMixin):
             container_client.upload_blob(
                 dest_path, file, overwrite=True, timeout=self.write_timeout
             )
-        webhook_url = SLACK_WEBHOOK_URL
-
-        print("############################## fdsasdf")
-        print(webhook_url)
-        send_slack_notification(webhook_url, "log_artifact upload donew")
-        print("############################## adfasdf")
+     
             
 
     def log_artifacts(self, local_dir, artifact_path=None):
